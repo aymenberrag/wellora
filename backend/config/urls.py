@@ -21,4 +21,22 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("api/auth/", include("accounts.urls")),
+
+    path("api/companies/", include("companies.urls")),
+
+    path("api/fields/", include("fields.urls")),
+
+    path("api/wells/", include("wells.urls")),
+
+    path("api/measurements/", include("measurements.urls")),
+
+    path("api/well-tests/", include("well_tests.urls")),
+
+    path("api/production/", include("production.urls")),
+
+    path("api/maintenance/", include("maintenance.urls")),
+
+    path("api/interventions/", include("interventions.urls")),
+
+    path("api/dashboard/", include("dashboard.urls")),
 ]

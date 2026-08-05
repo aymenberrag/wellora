@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "measurements",
     "maintenance",
     "interventions",
+    "production",
+    "dashboard",
 ]
 
 MIDDLEWARE = [
