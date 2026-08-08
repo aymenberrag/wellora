@@ -1,9 +1,13 @@
 import api from "./api";
 import type { Production } from "../types/production";
 
-export async function getProductions() {
-  const response = await api.get<Production[]>("/production/");
-  return response.data;
+export async function getProductions(params?: Record<string, any>) {
+  const response = await api.get("/production/", { params });
+  const data = response.data;
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
+  return data;
 }
 
 export async function createProduction(

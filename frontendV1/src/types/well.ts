@@ -4,8 +4,8 @@ export interface Well {
   code: string;
   name: string;
 
-  field: number;
-  operator: number;
+  field: number | string;
+  operator: number | string;
 
   field_name: string;
   operator_name: string;
@@ -28,8 +28,8 @@ export interface Well {
   completion_date: string | null;
   first_production_date: string | null;
 
-  total_depth: number | null;
-  true_vertical_depth: number | null;
+  total_depth: number | string | null;
+  true_vertical_depth: number | string | null;
 
   tubing_size: string | null;
   casing_size: string | null;
@@ -46,8 +46,8 @@ export interface Well {
   reservoir: string | null;
   formation: string | null;
 
-  latitude: number | null;
-  longitude: number | null;
+  latitude: number | string | null;
+  longitude: number | string | null;
 
   description: string | null;
 

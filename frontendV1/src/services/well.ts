@@ -88,8 +88,11 @@ export const ARTIFICIAL_LIFTS: ArtificialLift[] = [
   "Other",
 ];
 
-export async function getWells() {
-  const { data } = await api.get<Well[]>("/wells/");
+export async function getWells(params?: Record<string, any>) {
+  const { data } = await api.get("/wells/", { params });
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
   return data;
 }
 

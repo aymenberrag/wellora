@@ -2,32 +2,33 @@ export interface Company {
   id: number;
 
   name: string;
+  short_name?: string;
 
-  code: string;
+  code?: string;
 
-  company_type: string;
+  company_type?: string;
 
-  country: string;
+  country?: string;
 
-  city: string;
+  city?: string;
 
-  address: string;
+  address?: string;
 
-  email: string;
+  email?: string;
 
-  phone: string;
+  phone?: string;
 
-  website: string;
+  website?: string;
 
-  contact_person: string;
+  contact_person?: string;
 
-  description: string | null;
+  description?: string | null;
 
-  is_active: boolean;
+  is_active?: boolean;
 
-  created_at: string;
+  created_at?: string;
 
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface CompanyForm {

@@ -4,12 +4,13 @@ import type {
   Maintenance,
 } from "../types/maintenance";
 
-export async function getMaintenance() {
-  const response = await api.get<
-    Maintenance[]
-  >("/maintenance/");
-
-  return response.data;
+export async function getMaintenance(params?: Record<string, any>) {
+  const response = await api.get("/maintenance/", { params });
+  const data = response.data;
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
+  return data;
 }
 
 export async function createMaintenance(

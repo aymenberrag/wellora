@@ -127,6 +127,7 @@ export default function FieldModal({
       operator: Number(
         form.operator
       ),
+      status: form.status as Field["status"],
     };
 
     if (field)

@@ -18,7 +18,7 @@ export default function DeleteMeasurementDialog({
   if (!open || measurementId === null) return null;
 
   async function handleDelete() {
-    await mutation.mutateAsync(measurementId);
+    await mutation.mutateAsync(measurementId ?? 0);
     onClose();
   }
 

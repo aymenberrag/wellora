@@ -20,19 +20,22 @@ import MaintenanceTable from "../../components/maintenance/MaintenanceTable";
 import MaintenanceModal from "../../components/maintenance/MaintenanceModal";
 import MaintenanceDetailsModal from "../../components/maintenance/MaintenanceDetailsModal";
 import DeleteMaintenanceDialog from "../../components/maintenance/DeleteMaintenanceDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function MaintenancePage() {
-  const { data = [], isLoading } =
-    useMaintenance();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
-  const { data: wells = [] } =
-    useWells();
+  const { data: resp, isLoading } = useMaintenance({ page, page_size: pageSize });
 
-  const { data: companies = [] } =
-    useCompanies();
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
 
-  const { data: users = [] } =
-    useUsers();
+  const { data: wells = [] } = useWells();
+
+  const { data: companies = [] } = useCompanies();
+
+  const { data: users = [] } = useUsers();
 
   const createMutation =
     useCreateMaintenance();
@@ -43,8 +46,7 @@ export default function MaintenancePage() {
   const deleteMutation =
     useDeleteMaintenance();
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
   const [modalOpen, setModalOpen] =
     useState(false);
@@ -165,7 +167,7 @@ export default function MaintenancePage() {
 
       <MaintenanceToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => { setSearch(v); setPage(1); }}
         onCreate={handleCreate}
       />
 
@@ -174,6 +176,15 @@ export default function MaintenancePage() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <MaintenanceModal

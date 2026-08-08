@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "../services/company";
 
-export function useCompanies() {
+export function useCompanies(params?: Record<string, any>) {
   return useQuery({
-    queryKey: ["companies"],
-    queryFn: getCompanies,
+    queryKey: ["companies", params || {}],
+    queryFn: () => getCompanies(params || {}),
+    keepPreviousData: true,
   });
 }

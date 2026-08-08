@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getWellTests } from "../services/wellTest";
 
-export function useWellTests() {
+export function useWellTests(params?: Record<string, any>) {
   return useQuery({
-    queryKey: ["well-tests"],
-    queryFn: getWellTests,
+    queryKey: ["well-tests", params || {}],
+    queryFn: () => getWellTests(params || {}),
+    keepPreviousData: true,
   });
 }

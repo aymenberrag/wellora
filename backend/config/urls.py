@@ -40,5 +40,9 @@ urlpatterns = [
 
     path("api/dashboard/", include("dashboard.urls")),
 
+    path("api/search/", include("core.search_urls")),
+
+    path("api/notifications/", include("notifications.urls")),
+
     path("api/reports/", include("reports.urls")),
 ]

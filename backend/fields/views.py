@@ -1,6 +1,8 @@
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.viewsets import ModelViewSet
 
+from core.permissions import scope_queryset_for_user
+
 from .models import Field
 from .permissions import FieldPermission
 from .serializers import FieldSerializer
@@ -25,3 +27,6 @@ class FieldViewSet(ModelViewSet):
     ]
 
     ordering_fields = "__all__"
+
+    def get_queryset(self):
+        return scope_queryset_for_user(self.request.user, Field.objects.all(), "fields")

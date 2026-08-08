@@ -6,6 +6,7 @@ import WellTestTable from "../../components/well-tests/WellTestTable";
 import WellTestModal from "../../components/well-tests/WellTestModal";
 import WellTestDetailsModal from "../../components/well-tests/WellTestDetailsModal";
 import DeleteWellTestDialog from "../../components/well-tests/DeleteWellTestDialog";
+import Pagination from "../../components/common/Pagination";
 
 import { useWellTests } from "../../hooks/useWellTests";
 import { useCreateWellTest } from "../../hooks/useCreateWellTest";
@@ -19,11 +20,17 @@ import type {
 } from "../../types/wellTest";
 
 export default function WellTestPage() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
   const {
-    data: tests = [],
+    data: resp,
     isLoading,
     isError,
-  } = useWellTests();
+  } = useWellTests({ page, page_size: pageSize });
+
+  const tests = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? tests.length;
 
   const {
     data: wells = [],
@@ -38,8 +45,7 @@ export default function WellTestPage() {
   const deleteMutation =
     useDeleteWellTest();
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
   const [modalOpen, setModalOpen] =
     useState(false);
@@ -53,15 +59,10 @@ export default function WellTestPage() {
   const [selectedTest, setSelectedTest] =
     useState<WellTest | null>(null);
 
-  const filteredTests =
-    tests.filter((item) =>
-      `${item.well_name}
-      ${item.test_date}
-      ${item.oil_rate}
-      ${item.gas_rate}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
+  // server-side pagination: tests is current page
+  const filteredTests = tests.filter((item) =>
+    `${item.well_name} ${item.test_date} ${item.oil_rate} ${item.gas_rate}`.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleCreate = () => {
     setSelectedTest(null);
@@ -175,7 +176,7 @@ export default function WellTestPage() {
 
       <WellTestToolbar
         search={search}
-        setSearch={setSearch}
+        setSearch={(v: string) => { setSearch(v); setPage(1); }}
         onAdd={handleCreate}
       />
 
@@ -184,6 +185,15 @@ export default function WellTestPage() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <WellTestModal

@@ -18,4 +18,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      storage.clearAuth();
+
+      if (window.location.pathname !== "/") {
+        window.location.replace("/");
+      }
+    }
+
+    if (error.response?.status === 403 && window.location.pathname !== "/403") {
+      window.location.replace("/403");
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

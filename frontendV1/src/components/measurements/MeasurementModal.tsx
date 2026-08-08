@@ -12,7 +12,6 @@ import {
 
 import { getWells } from "../../services/well";
 
-
 interface Well {
   id: number;
   code: string;
@@ -30,7 +29,29 @@ interface Props {
   measurement?: Measurement | null;
 }
 
-const initialForm = {
+type MeasurementForm = {
+  well: string;
+  measurement_date: string;
+  shift: Measurement["shift"];
+  operating_status: Measurement["operating_status"];
+  wellhead_pressure: string;
+  tubing_head_pressure: string;
+  casing_pressure: string;
+  flowline_pressure: string;
+  wellhead_temperature: string;
+  flowline_temperature: string;
+  choke_size: string;
+  esp_frequency: string;
+  motor_current: string;
+  water_cut: string;
+  gor: string;
+  bsw: string;
+  downtime_hours: string;
+  downtime_reason: string;
+  remarks: string;
+};
+
+const initialForm: MeasurementForm = {
   well: "",
 
   measurement_date: new Date()
@@ -80,7 +101,7 @@ export default function MeasurementModal({
     useState<DowntimeReason[]>([]);
 
   const [form, setForm] =
-    useState(initialForm);
+    useState<MeasurementForm>(initialForm);
 
   useEffect(() => {
     if (!open) return;
@@ -187,7 +208,7 @@ export default function MeasurementModal({
     try {
       setLoading(true);
 
-      const payload = {
+      const payload: Partial<Measurement> = {
         ...form,
 
         well: Number(form.well),

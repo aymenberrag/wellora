@@ -6,6 +6,7 @@ import InterventionTable from "../../components/interventions/InterventionTable"
 import InterventionModal from "../../components/interventions/InterventionModal";
 import InterventionDetailsModal from "../../components/interventions/InterventionDetailsModal";
 import DeleteInterventionDialog from "../../components/interventions/DeleteInterventionDialog";
+import Pagination from "../../components/common/Pagination";
 
 import { useInterventions } from "../../hooks/useInterventions";
 import { useCreateIntervention } from "../../hooks/useCreateIntervention";
@@ -23,13 +24,17 @@ import type {
 
 
 export default function InterventionPage() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const {
-    data: interventions = [],
+    data: resp,
     isLoading,
     isError,
-  } = useInterventions();
+  } = useInterventions({ page, page_size: pageSize });
 
+  const interventions = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? interventions.length;
 
   const {
     data: wells = [],
@@ -59,8 +64,7 @@ export default function InterventionPage() {
 
 
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
 
   const [modalOpen, setModalOpen] =
@@ -80,17 +84,10 @@ export default function InterventionPage() {
 
 
 
-  const filteredInterventions =
-    interventions.filter((item) =>
-      `${item.title}
-      ${item.well_name}
-      ${item.intervention_type}
-      ${item.status}`
-        .toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
-    );
+  // server-side pagination: interventions is current page
+  const filteredInterventions = interventions.filter((item) =>
+    `${item.title} ${item.well_name} ${item.intervention_type} ${item.status}`.toLowerCase().includes(search.toLowerCase())
+  );
 
 
   const handleCreate = () => {
@@ -210,7 +207,7 @@ export default function InterventionPage() {
 
       <InterventionToolbar
         search={search}
-        setSearch={setSearch}
+        setSearch={(v: string) => { setSearch(v); setPage(1); }}
         onAdd={handleCreate}
       />
 
@@ -219,6 +216,15 @@ export default function InterventionPage() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <InterventionModal

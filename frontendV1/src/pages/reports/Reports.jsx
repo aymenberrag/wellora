@@ -3,7 +3,10 @@ import { useState } from "react";
 
 import ProductionReport from "./ProductionReport";
 import WellTestReport from "./WellTestReport";
-// import MaintenanceReport from "./MaintenanceReport";
+import WellReport from "./WellReport";
+import MaintenanceReport from "./MaintenanceReport";
+import FieldReport from "./FieldReport";
+import MeasurementReport from "./MeasurementReport";
 import InterventionReport from "./InterventionReport";
 
 const tabs = [
@@ -16,8 +19,20 @@ const tabs = [
     label: "Well Test",
   },
   {
+    id: "well",
+    label: "Well",
+  },
+  {
     id: "maintenance",
     label: "Maintenance",
+  },
+  {
+    id: "field",
+    label: "Field",
+  },
+  {
+    id: "measurement",
+    label: "Measurement",
   },
   {
     id: "intervention",
@@ -38,18 +53,17 @@ const Reports = () => {
       case "well-test":
         return <WellTestReport />;
 
-      case "maintenance":
-        return (
-          <div className="rounded-xl border bg-white p-10 text-center">
-            <h2 className="text-lg font-semibold">
-              Maintenance Report
-            </h2>
+        case "well":
+          return <WellReport />;
 
-            <p className="mt-2 text-sm text-gray-500">
-              Coming next.
-            </p>
-          </div>
-        );
+      case "maintenance":
+        return <MaintenanceReport />;
+
+      case "field":
+        return <FieldReport />;
+
+      case "measurement":
+        return <MeasurementReport />;
 
       case "intervention":
         return <InterventionReport />;

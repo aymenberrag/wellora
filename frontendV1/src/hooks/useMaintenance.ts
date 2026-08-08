@@ -4,9 +4,10 @@ import {
   getMaintenance,
 } from "../services/maintenance";
 
-export function useMaintenance() {
+export function useMaintenance(params?: Record<string, any>) {
   return useQuery({
-    queryKey: ["maintenance"],
-    queryFn: getMaintenance,
+    queryKey: ["maintenance", params || {}],
+    queryFn: () => getMaintenance(params || {}),
+    keepPreviousData: true,
   });
 }

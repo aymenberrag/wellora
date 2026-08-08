@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { MapPinned, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import type { Field } from "../../services/field";
 
@@ -12,48 +12,35 @@ import FieldTable from "../../components/fields/FieldTable";
 import FieldModal from "../../components/fields/FieldModal";
 import FieldDetailsModal from "../../components/fields/FieldDetailsModal";
 import DeleteFieldDialog from "../../components/fields/DeleteFieldDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function FieldsPage() {
-  const { data = [], isLoading } =
-    useFields();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [status, setStatus] =
-    useState("All");
+  const [status, setStatus] = useState("All");
 
-  const [selected, setSelected] =
-    useState<Field | null>(null);
+  const { data: resp, isLoading } = useFields({
+    page,
+    page_size: pageSize,
+    search: search || undefined,
+    status: status !== "All" ? status : undefined,
+  });
 
-  const [openModal, setOpenModal] =
-    useState(false);
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
 
-  const [openDetails, setOpenDetails] =
-    useState(false);
+  const [selected, setSelected] = useState<Field | null>(null);
 
-  const [openDelete, setOpenDelete] =
-    useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const filtered = useMemo(() => {
-    return data.filter((field) => {
-      const text = `${field.name}
-      ${field.code}
-      ${field.country}
-      ${field.city}`.toLowerCase();
+  const [openDetails, setOpenDetails] = useState(false);
 
-      const okSearch =
-        text.includes(
-          search.toLowerCase()
-        );
+  const [openDelete, setOpenDelete] = useState(false);
 
-      const okStatus =
-        status === "All" ||
-        field.status === status;
-
-      return okSearch && okStatus;
-    });
-  }, [data, search, status]);
+  const filtered = data;
 
   return (
     <div className="space-y-8">
@@ -110,9 +97,9 @@ export default function FieldsPage() {
 
       <FieldToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => { setSearch(v); setPage(1); }}
         status={status}
-        onStatus={setStatus}
+        onStatus={(v) => { setStatus(v); setPage(1); }}
       />
 
       <FieldTable
@@ -130,6 +117,15 @@ export default function FieldsPage() {
           setSelected(field);
           setOpenDelete(true);
         }}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <FieldModal

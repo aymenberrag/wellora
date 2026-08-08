@@ -56,20 +56,6 @@ export default function MeasurementStats({
     m => m.operating_status === "Running"
   ).length;
 
-  const avgPressure =
-    measurements.length === 0
-      ? 0
-      : (
-          measurements.reduce(
-            (sum, m) =>
-              sum +
-              Number(
-                m.wellhead_pressure ?? 0
-              ),
-            0
-          ) / measurements.length
-        ).toFixed(1);
-
   const avgWaterCut =
     measurements.length === 0
       ? 0

@@ -12,45 +12,35 @@ import MeasurementTable from "../../components/measurements/MeasurementTable";
 import MeasurementModal from "../../components/measurements/MeasurementModal";
 import MeasurementDetailsModal from "../../components/measurements/MeasurementDetailsModal";
 import DeleteMeasurementDialog from "../../components/measurements/DeleteMeasurementDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function MeasurementsPage() {
-  const { data = [], isLoading } =
-    useMeasurements();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [status, setStatus] =
-    useState("All");
+  const [status, setStatus] = useState("All");
 
-  const [selected, setSelected] =
-    useState<Measurement | null>(null);
+  const { data: resp, isLoading } = useMeasurements({
+    page,
+    page_size: pageSize,
+    search: search || undefined,
+    status: status !== "All" ? status : undefined,
+  });
 
-  const [openModal, setOpenModal] =
-    useState(false);
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
 
-  const [openDetails, setOpenDetails] =
-    useState(false);
+  const [selected, setSelected] = useState<Measurement | null>(null);
 
-  const [openDelete, setOpenDelete] =
-    useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const filtered = useMemo(() => {
-    return data.filter((m) => {
-      const text =
-        `${m.well_code}
-         ${m.well_name}
-         ${m.field_name}`.toLowerCase();
+  const [openDetails, setOpenDetails] = useState(false);
 
-      return (
-        text.includes(
-          search.toLowerCase()
-        ) &&
-        (status === "All" ||
-          m.operating_status === status)
-      );
-    });
-  }, [data, search, status]);
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const filtered = data;
 
   return (
     <div className="space-y-8">
@@ -88,9 +78,9 @@ export default function MeasurementsPage() {
 
       <MeasurementToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => { setSearch(v); setPage(1); }}
         status={status}
-        onStatus={setStatus}
+        onStatus={(v) => { setStatus(v); setPage(1); }}
       />
 
       <MeasurementTable
@@ -108,6 +98,15 @@ export default function MeasurementsPage() {
           setSelected(m);
           setOpenDelete(true);
         }}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <MeasurementModal

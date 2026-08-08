@@ -4,9 +4,13 @@ import type {
   InterventionForm,
 } from "../types/intervention";
 
-export async function getInterventions() {
-  const response = await api.get<Intervention[]>("/interventions/");
-  return response.data;
+export async function getInterventions(params?: Record<string, any>) {
+  const response = await api.get("/interventions/", { params });
+  const data = response.data;
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
+  return data;
 }
 
 export async function createIntervention(

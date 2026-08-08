@@ -1,6 +1,8 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
+from core.permissions import scope_queryset_for_user
+
 from .models import WellMeasurement
 from .permissions import MeasurementPermission
 from .serializers import WellMeasurementSerializer
@@ -27,6 +29,9 @@ class WellMeasurementViewSet(ModelViewSet):
     ]
 
     ordering_fields = "__all__"
+
+    def get_queryset(self):
+        return scope_queryset_for_user(self.request.user, WellMeasurement.objects.all(), "measurements")
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated

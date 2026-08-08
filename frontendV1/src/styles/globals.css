@@ -1,1 +1,74 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background: #f1f5f9;
+	color: #0f172a;
+	transition: background-color 180ms ease, color 180ms ease;
+}
+
+.dark body {
+	background: #0f172a;
+	color: #e2e8f0;
+}
+
+.dark .bg-white {
+	background-color: #0f172a;
+}
+
+.dark .bg-gray-50,
+.dark .bg-slate-100 {
+	background-color: #0f172a;
+}
+
+.dark .bg-slate-50 {
+	background-color: #1e293b;
+}
+
+.dark .text-gray-900,
+.dark .text-slate-900,
+.dark .text-slate-800 {
+	color: #f1f5f9;
+}
+
+.dark .text-gray-700,
+.dark .text-slate-700 {
+	color: #cbd5e1;
+}
+
+.dark .border-gray-200,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+	border-color: #334155;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+	border-color: #475569;
+	background-color: #1e293b;
+	color: #f1f5f9;
+}
+
+.dark .recharts-cartesian-axis-tick-value,
+.dark .recharts-text,
+.dark .recharts-legend-item-text {
+	fill: #cbd5e1;
+	color: #cbd5e1;
+}
+
+.dark .recharts-cartesian-grid line {
+	stroke: #334155;
+}
+
+.dark .recharts-tooltip-wrapper {
+	color: #0f172a;
+}

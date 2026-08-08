@@ -9,13 +9,26 @@ import CompanyTable from "../../components/companies/CompanyTable";
 import CompanyModal from "../../components/companies/CompanyModal";
 import CompanyDetailsModal from "../../components/companies/CompanyDetailsModal";
 import DeleteCompanyDialog from "../../components/companies/DeleteCompanyDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function CompaniesPage() {
-  const { data = [], isLoading } = useCompanies();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   const [search, setSearch] = useState("");
   const [type, setType] = useState("All");
   const [status, setStatus] = useState("All");
+
+  const { data: resp, isLoading } = useCompanies({
+    page,
+    page_size: pageSize,
+    search: search || undefined,
+    type: type !== "All" ? type : undefined,
+    status: status !== "All" ? status : undefined,
+  });
+
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
 
   const [selected, setSelected] = useState<Company | null>(null);
 
@@ -23,35 +36,14 @@ export default function CompaniesPage() {
   const [openDetails, setOpenDetails] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const filtered = useMemo(() => {
-    return data.filter((company) => {
-      const matchesSearch =
-        company.name.toLowerCase().includes(search.toLowerCase()) ||
-        company.short_name.toLowerCase().includes(search.toLowerCase()) ||
-        company.country.toLowerCase().includes(search.toLowerCase()) ||
-        company.city.toLowerCase().includes(search.toLowerCase());
-
-      const matchesType =
-        type === "All" || company.company_type === type;
-
-      const matchesStatus =
-        status === "All" ||
-        (status === "Active" && company.is_active) ||
-        (status === "Inactive" && !company.is_active);
-
-      return matchesSearch && matchesType && matchesStatus;
-    });
-  }, [data, search, type, status]);
+  // With server-side pagination, `data` already represents the current page.
+  const filtered = data;
 
   const stats = {
-    total: data.length,
+    total,
     active: data.filter((c) => c.is_active).length,
-    service: data.filter(
-      (c) => c.company_type === "Service Company"
-    ).length,
-    operators: data.filter(
-      (c) => c.company_type === "Oil Company"
-    ).length,
+    service: data.filter((c) => c.company_type === "Service Company").length,
+    operators: data.filter((c) => c.company_type === "Oil Company").length,
   };
 
   return (
@@ -110,11 +102,20 @@ export default function CompaniesPage() {
 
       <CompanyToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => {
+          setSearch(v);
+          setPage(1);
+        }}
         type={type}
-        onType={setType}
+        onType={(v) => {
+          setType(v);
+          setPage(1);
+        }}
         status={status}
-        onStatus={setStatus}
+        onStatus={(v) => {
+          setStatus(v);
+          setPage(1);
+        }}
       />
 
       <CompanyTable
@@ -133,6 +134,21 @@ export default function CompaniesPage() {
           setOpenDelete(true);
         }}
       />
+
+      {/* Pagination */}
+      <div>
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={(p) => setPage(p)}
+          onPageSizeChange={(s) => {
+            setPageSize(s);
+            setPage(1);
+          }}
+          loading={isLoading}
+        />
+      </div>
 
       <CompanyModal
         open={openModal}

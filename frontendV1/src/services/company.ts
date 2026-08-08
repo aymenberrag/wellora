@@ -12,8 +12,13 @@ export interface Company {
   is_active: boolean;
 }
 
-export async function getCompanies() {
-  const { data } = await api.get<Company[]>("/companies/");
+export async function getCompanies(params?: Record<string, any>) {
+  const { data } = await api.get("/companies/", { params });
+  // If the response uses DRF pagination, return the whole payload
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
+
   return data;
 }
 

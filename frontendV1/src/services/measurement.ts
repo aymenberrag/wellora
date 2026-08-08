@@ -69,10 +69,7 @@ export const OPERATING_STATUS: OperatingStatus[] = [
 ];
 
 export async function getMeasurements() {
-  const { data } = await api.get<Measurement[]>(
-    "/measurements/measurements/"
-  );
-
+  const { data } = await api.get("/measurements/measurements/");
   return data;
 }
 

@@ -12,49 +12,36 @@ import WellTable from "../../components/wells/WellTable";
 import WellModal from "../../components/wells/WellModal";
 import WellDetailsModal from "../../components/wells/WellDetailsModal";
 import DeleteWellDialog from "../../components/wells/DeleteWellDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function WellsPage() {
-  const { data = [], isLoading } =
-    useWells();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [status, setStatus] =
-    useState("All");
+  const [status, setStatus] = useState("All");
 
-  const [selected, setSelected] =
-    useState<Well | null>(null);
+  const { data: resp, isLoading } = useWells({
+    page,
+    page_size: pageSize,
+    search: search || undefined,
+    status: status !== "All" ? status : undefined,
+  });
 
-  const [openModal, setOpenModal] =
-    useState(false);
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
 
-  const [openDetails, setOpenDetails] =
-    useState(false);
+  const [selected, setSelected] = useState<Well | null>(null);
 
-  const [openDelete, setOpenDelete] =
-    useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const filtered = useMemo(() => {
-    return data.filter((well) => {
-      const text =
-        `${well.code}
-         ${well.name}
-         ${well.field_name}
-         ${well.operator_name}`.toLowerCase();
+  const [openDetails, setOpenDetails] = useState(false);
 
-      const okSearch =
-        text.includes(
-          search.toLowerCase()
-        );
+  const [openDelete, setOpenDelete] = useState(false);
 
-      const okStatus =
-        status === "All" ||
-        well.status === status;
-
-      return okSearch && okStatus;
-    });
-  }, [data, search, status]);
+  // server-side pagination: data is current page
+  const filtered = data;
 
   return (
     <div className="space-y-8">
@@ -127,9 +114,9 @@ export default function WellsPage() {
 
       <WellToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => { setSearch(v); setPage(1); }}
         status={status}
-        onStatus={setStatus}
+        onStatus={(v) => { setStatus(v); setPage(1); }}
       />
 
       <WellTable
@@ -147,6 +134,15 @@ export default function WellsPage() {
           setSelected(well);
           setOpenDelete(true);
         }}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <WellModal

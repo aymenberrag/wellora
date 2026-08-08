@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getFields } from "../services/field";
 
-export function useFields() {
+export function useFields(params?: Record<string, any>) {
   return useQuery({
-    queryKey: ["fields"],
-    queryFn: getFields,
+    queryKey: ["fields", params || {}],
+    queryFn: () => getFields(params || {}),
+    keepPreviousData: true,
   });
 }

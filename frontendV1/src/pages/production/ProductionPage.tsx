@@ -18,14 +18,18 @@ import ProductionTable from "../../components/production/ProductionTable";
 import ProductionModal from "../../components/production/ProductionModal";
 import ProductionDetailsModal from "../../components/production/ProductionDetailsModal";
 import DeleteProductionDialog from "../../components/production/DeleteProductionDialog";
+import Pagination from "../../components/common/Pagination";
 
 export default function ProductionPage() {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
-  const { data = [], isLoading } =
-    useProduction();
+  const { data: resp, isLoading } = useProduction({ page, page_size: pageSize });
 
-  const { data: wells = [] } =
-    useWells();
+  const data = resp?.results ?? resp ?? [];
+  const total = resp?.count ?? data.length;
+
+  const { data: wells = [] } = useWells();
 
   const createMutation =
     useCreateProduction();
@@ -36,37 +40,22 @@ export default function ProductionPage() {
   const deleteMutation =
     useDeleteProduction();
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [modalOpen, setModalOpen] =
-    useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const [detailsOpen, setDetailsOpen] =
-    useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
-  const [deleteOpen, setDeleteOpen] =
-    useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const [selectedProduction,
-    setSelectedProduction] =
-    useState<Production | null>(null);
-  const filteredData = useMemo(() => {
+  const [selectedProduction, setSelectedProduction] = useState<Production | null>(null);
 
-    const keyword =
-      search.toLowerCase();
+  // server-side pagination: data is current page already
+  const filteredData = data.filter((item) => {
+    const keyword = search.toLowerCase();
 
-    return data.filter((item) =>
-      item.well_name
-        .toLowerCase()
-        .includes(keyword) ||
-
-      item.well_code
-        .toLowerCase()
-        .includes(keyword)
-    );
-
-  }, [data, search]);
+    return item.well_name.toLowerCase().includes(keyword) || item.well_code.toLowerCase().includes(keyword);
+  });
 
   function handleCreate() {
 
@@ -126,7 +115,15 @@ export default function ProductionPage() {
     } else {
 
       await createMutation.mutateAsync(
-        form
+        {
+          ...form,
+          well: Number(form.well),
+          oil_production: Number(form.oil_production),
+          gas_production: Number(form.gas_production),
+          water_production: Number(form.water_production),
+          operating_hours: Number(form.operating_hours),
+          downtime_hours: Number(form.downtime_hours),
+        }
       );
 
     }
@@ -179,7 +176,7 @@ export default function ProductionPage() {
 
       <ProductionToolbar
         search={search}
-        onSearch={setSearch}
+        onSearch={(v) => { setSearch(v); setPage(1); }}
         onCreate={handleCreate}
       />
 
@@ -188,6 +185,15 @@ export default function ProductionPage() {
         onView={handleView}
         onEdit={handleEdit}
         onDelete={handleDelete}
+      />
+
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={(p) => setPage(p)}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+        loading={isLoading}
       />
 
       <ProductionModal

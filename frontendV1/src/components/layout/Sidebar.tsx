@@ -14,18 +14,20 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { storage } from "../../services/storage";
+import { canAccess } from "../../utils/permissions";
 
 const menu = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-  { name: "Companies", icon: Building2, path: "/companies" },
-  { name: "Fields", icon: Map, path: "/fields" },
-  { name: "Wells", icon: Droplets, path: "/wells" },
-  { name: "Measurements", icon: Activity, path: "/measurements" },
-  { name: "Well Tests", icon: FlaskConical, path: "/well-tests" },
-  { name: "Production", icon: BarChart3, path: "/production" },
-  { name: "Maintenance", icon: Wrench, path: "/maintenance" },
-  { name: "Interventions", icon: ShieldAlert, path: "/interventions" },
-  { name: "Reports", icon: FileText, path: "/reports" },
+  { name: "Companies", icon: Building2, path: "/companies", resource: "companies", action: "view" },
+  { name: "Fields", icon: Map, path: "/fields", resource: "fields", action: "view" },
+  { name: "Wells", icon: Droplets, path: "/wells", resource: "wells", action: "view" },
+  { name: "Measurements", icon: Activity, path: "/measurements", resource: "measurements", action: "view" },
+  { name: "Well Tests", icon: FlaskConical, path: "/well-tests", resource: "well_tests", action: "view" },
+  { name: "Production", icon: BarChart3, path: "/production", resource: "production", action: "view" },
+  { name: "Maintenance", icon: Wrench, path: "/maintenance", resource: "maintenance", action: "view" },
+  { name: "Interventions", icon: ShieldAlert, path: "/interventions", resource: "interventions", action: "view" },
+  { name: "Reports", icon: FileText, path: "/reports", resource: "reports", action: "view" },
   { name: "Settings", icon: Settings, path: "/settings" },
 ];
 
@@ -38,6 +40,10 @@ export default function Sidebar({
   collapsed,
   setCollapsed,
 }: SidebarProps) {
+  const user = storage.getUser();
+  const visibleMenu = menu.filter((item) => !item.resource || canAccess(user, item.resource, item.action));
+  const displayName = [user?.first_name, user?.last_name].filter(Boolean).join(" ") || user?.username || "User";
+  const roleLabel = user?.role?.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (char: string) => char.toUpperCase()) || "User";
 
   return (
     <aside
@@ -67,7 +73,7 @@ export default function Sidebar({
       {/* Menu */}
       <div className="flex-1 overflow-y-auto p-3">
         <ul className="space-y-2">
-          {menu.map((item) => {
+          {visibleMenu.map((item) => {
             const Icon = item.icon;
 
             return (
@@ -100,14 +106,14 @@ export default function Sidebar({
       <div className="border-t border-slate-200 p-4">
         {collapsed ? (
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-lg font-bold text-white">
-            A
+            {displayName.charAt(0).toUpperCase()}
           </div>
         ) : (
           <div className="rounded-xl bg-slate-100 p-4">
-            <h3 className="font-semibold">Aymen</h3>
+            <h3 className="font-semibold">{displayName}</h3>
 
             <p className="text-sm text-slate-500">
-              Production Engineer
+              {roleLabel}
             </p>
           </div>
         )}

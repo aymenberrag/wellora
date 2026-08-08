@@ -23,9 +23,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+WELLORA_PRODUCTION_DECLINE_THRESHOLD = config(
+    "WELLORA_PRODUCTION_DECLINE_THRESHOLD",
+    default=15.0,
+    cast=float,
+)
+
+WELLORA_MAINTENANCE_DUE_DAYS = config(
+    "WELLORA_MAINTENANCE_DUE_DAYS",
+    default=2,
+    cast=int,
+)
+
+WELLORA_MEASUREMENT_LIMITS = {
+    "wellhead_pressure": {"min": 0, "max": 2000},
+    "wellhead_temperature": {"min": -20, "max": 150},
+    "motor_current": {"min": 0, "max": 500},
+    "esp_frequency": {"min": 0, "max": 100},
+}
+
+WELLORA_WELL_TEST_LIMITS = {
+    "water_cut": 80,
+    "gor": 2000,
+}
+
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="localhost,127.0.0.1",
+    cast=lambda value: [item.strip() for item in value.split(",") if item.strip()],
+)
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS",
+    default="http://localhost:5173,http://127.0.0.1:5173",
+    cast=lambda value: [item.strip() for item in value.split(",") if item.strip()],
+)
 
 
 # Application definition
@@ -53,6 +87,7 @@ INSTALLED_APPS = [
     "production",
     "dashboard",
     "reports",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -148,16 +183,55 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "30/min",
+        "user": "200/min",
+        "login": "10/hour",
+        "password": "10/hour",
+    },
 }
+
+# Use project-wide DRF pagination class
+REST_FRAMEWORK["DEFAULT_PAGINATION_CLASS"] = "core.pagination.StandardPagination"
+REST_FRAMEWORK["PAGE_SIZE"] = 20
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS",
+    default="http://localhost:5173,http://127.0.0.1:5173",
+    cast=lambda value: [item.strip() for item in value.split(",") if item.strip()],
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+    X_FRAME_OPTIONS = "SAMEORIGIN"
+    SECURE_CONTENT_TYPE_NOSNIFF = False
+    SECURE_REFERRER_POLICY = "same-origin"

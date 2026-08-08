@@ -23,10 +23,26 @@ export const storage = {
 
   getUser() {
     const user = localStorage.getItem(USER);
-    return user ? JSON.parse(user) : null;
+    if (!user) return null;
+    try {
+      return JSON.parse(user);
+    } catch {
+      localStorage.removeItem(USER);
+      return null;
+    }
+  },
+
+  saveUser(user: unknown) {
+    localStorage.setItem(USER, JSON.stringify(user));
+  },
+
+  clearAuth() {
+    localStorage.removeItem(ACCESS);
+    localStorage.removeItem(REFRESH);
+    localStorage.removeItem(USER);
   },
 
   clear() {
-    localStorage.clear();
+    this.clearAuth();
   },
 };

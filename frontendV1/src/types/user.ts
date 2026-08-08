@@ -9,13 +9,29 @@ export interface User {
 
   full_name: string;
 
-  company: number | null;
+  company: number | string | null;
 
   company_name: string;
 
   job_title: string | null;
 
+  email?: string | null;
+
+  phone_number?: string | null;
+
+  country?: string | null;
+
+  state?: string | null;
+
+  city?: string | null;
+
+  address?: string | null;
+
+  hire_date?: string | null;
+
   role: string;
+
+  permissions?: string[];
 
   is_active: boolean;
 }

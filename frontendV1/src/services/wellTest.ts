@@ -4,12 +4,13 @@ import type {
   WellTestForm,
 } from "../types/wellTest";
 
-export async function getWellTests() {
-  const response = await api.get<WellTest[]>(
-    "/well-tests/"
-  );
-
-  return response.data;
+export async function getWellTests(params?: Record<string, any>) {
+  const response = await api.get("/well-tests/", { params });
+  const data = response.data;
+  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+    return data;
+  }
+  return data;
 }
 
 export async function createWellTest(

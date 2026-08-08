@@ -1,6 +1,8 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 
+from core.permissions import scope_queryset_for_user
+
 from .models import WellIntervention
 from .serializers import WellInterventionSerializer
 from .permissions import InterventionPermission
@@ -27,3 +29,6 @@ class WellInterventionViewSet(ModelViewSet):
     ]
 
     ordering_fields = "__all__"
+
+    def get_queryset(self):
+        return scope_queryset_for_user(self.request.user, WellIntervention.objects.all(), "interventions")
