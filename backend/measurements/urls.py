@@ -1,9 +1,20 @@
 from rest_framework.routers import DefaultRouter
 
-from .views import WellMeasurementViewSet
+from .views import (
+    WellMeasurementViewSet,
+    DowntimeReasonViewSet,
+)
 
 router = DefaultRouter()
 
-router.register("", WellMeasurementViewSet, basename="measurements")
+router.register(
+    "measurements",
+    WellMeasurementViewSet,
+)
+
+router.register(
+    "downtime-reasons",
+    DowntimeReasonViewSet,
+)
 
 urlpatterns = router.urls

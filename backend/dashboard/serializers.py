@@ -23,6 +23,8 @@ class DashboardSerializer(serializers.Serializer):
 
     ongoing_interventions = serializers.IntegerField()
 
+    production_trend = serializers.ListField()
+
     recent_measurements = serializers.ListField()
 
     recent_production = serializers.ListField()

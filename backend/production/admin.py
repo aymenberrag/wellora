@@ -1,10 +1,11 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import Production
 
 
 @admin.register(Production)
-class ProductionAdmin(admin.ModelAdmin):
+class ProductionAdmin(ImportExportModelAdmin):
+
     list_display = (
         "well",
         "production_date",

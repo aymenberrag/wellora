@@ -1,10 +1,10 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import Maintenance
 
 
 @admin.register(Maintenance)
-class MaintenanceAdmin(admin.ModelAdmin):
+class MaintenanceAdmin(ImportExportModelAdmin):
     list_display = (
         "well",
         "title",

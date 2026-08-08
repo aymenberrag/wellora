@@ -1,10 +1,10 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import DowntimeReason, WellMeasurement
 
 
 @admin.register(DowntimeReason)
-class DowntimeReasonAdmin(admin.ModelAdmin):
+class DowntimeReasonAdmin(ImportExportModelAdmin):
     list_display = (
         "name",
         "is_active",

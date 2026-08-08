@@ -70,3 +70,30 @@ class ChangePasswordSerializer(serializers.Serializer):
             )
 
         return attrs
+
+class UserListSerializer(serializers.ModelSerializer):
+
+    company_name = serializers.CharField(
+        source="company.name",
+        read_only=True
+    )
+
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "full_name",
+            "company",
+            "company_name",
+            "job_title",
+            "role",
+            "is_active",
+        )
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()

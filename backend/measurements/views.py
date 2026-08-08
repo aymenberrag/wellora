@@ -27,3 +27,18 @@ class WellMeasurementViewSet(ModelViewSet):
     ]
 
     ordering_fields = "__all__"
+
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+
+from .models import DowntimeReason
+from .serializers import DowntimeReasonSerializer
+
+
+class DowntimeReasonViewSet(viewsets.ModelViewSet):
+
+    queryset = DowntimeReason.objects.all()
+
+    serializer_class = DowntimeReasonSerializer
+
+    permission_classes = [IsAuthenticated]

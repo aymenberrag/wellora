@@ -1,10 +1,10 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import Well
 
 
 @admin.register(Well)
-class WellAdmin(admin.ModelAdmin):
+class WellAdmin(ImportExportModelAdmin):
     list_display = (
         "code",
         "name",

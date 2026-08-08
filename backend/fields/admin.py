@@ -1,10 +1,10 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import Field
 
 
 @admin.register(Field)
-class FieldAdmin(admin.ModelAdmin):
+class FieldAdmin(ImportExportModelAdmin):
     list_display = (
         "code",
         "name",

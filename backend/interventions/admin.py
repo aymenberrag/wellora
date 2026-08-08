@@ -1,10 +1,11 @@
 from django.contrib import admin
-
+from import_export.admin import ImportExportModelAdmin
 from .models import WellIntervention
 
 
 @admin.register(WellIntervention)
-class WellInterventionAdmin(admin.ModelAdmin):
+class WellInterventionAdmin(ImportExportModelAdmin):
+
     list_display = (
         "well",
         "intervention_type",

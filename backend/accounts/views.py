@@ -6,6 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from rest_framework.generics import ListAPIView
+
+from .models import User
+from .serializers import UserListSerializer
+
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
@@ -113,4 +118,30 @@ class ChangePasswordView(APIView):
         return Response(
             {"message": "Password changed successfully."},
             status=status.HTTP_200_OK,
+        )
+
+class UserListView(ListAPIView):
+
+    serializer_class = UserListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+
+        user = self.request.user
+
+        queryset = User.objects.select_related(
+            "company"
+        )
+
+        if user.is_superuser:
+            return queryset.order_by(
+                "first_name",
+                "last_name",
+            )
+
+        return queryset.filter(
+            company=user.company
+        ).order_by(
+            "first_name",
+            "last_name",
         )
