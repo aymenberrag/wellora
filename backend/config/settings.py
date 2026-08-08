@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "interventions",
     "production",
     "dashboard",
+    "reports",
 ]
 
 MIDDLEWARE = [

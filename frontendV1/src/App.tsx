@@ -13,6 +13,7 @@ import ProductionPage from "./pages/production/ProductionPage";
 import MaintenancePage from "./pages/maintenance/MaintenancePage";
 import InterventionPage from "./pages/interventions/InterventionPage";
 import WellTestPage from "./pages/well-tests/WellTestPage";
+import Reports from "./pages/reports/Reports";
 
 
 
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/maintenance" element={<MaintenancePage />} />
         <Route path="/interventions" element={<InterventionPage />} />
         <Route path="/well-tests" element={<WellTestPage />} />
+        <Route path="/reports" element={<Reports />} />
       </Route>
 
       <Route path="/home" element={<Navigate to="/dashboard" replace />} />
