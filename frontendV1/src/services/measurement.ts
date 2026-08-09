@@ -1,5 +1,6 @@
 import api from "./api";
 
+
 export type Shift = "Day" | "Night";
 
 export type OperatingStatus =
@@ -55,6 +56,13 @@ export interface Measurement {
   updated_at: string;
 }
 
+export interface DowntimeReason {
+  id: number;
+  name: string;
+  description?: string;
+  is_active: boolean;
+}
+
 export const SHIFTS: Shift[] = [
   "Day",
   "Night",
@@ -104,10 +112,18 @@ export async function deleteMeasurement(
   );
 }
 
-export async function getDowntimeReasons() {
-  const { data } = await api.get(
-    "/measurements/downtime-reasons/"
-  );
+export async function getDowntimeReasons(
+  params?: Record<string, any>
+): Promise<DowntimeReason[]> {
+  const { data } = await api.get("/measurements/downtime-reasons/", { params });
 
-  return data;
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  if (data?.results && Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
 }

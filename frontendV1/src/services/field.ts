@@ -33,12 +33,20 @@ export const FIELD_STATUS = [
   "Abandoned",
 ];
 
-export async function getFields(params?: Record<string, any>) {
+export async function getFields(
+  params?: Record<string, any>
+): Promise<Field[]> {
   const { data } = await api.get("/fields/", { params });
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+
+  if (Array.isArray(data)) {
     return data;
   }
-  return data;
+
+  if (data?.results && Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
 }
 
 export async function createField(

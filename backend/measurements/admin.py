@@ -20,7 +20,7 @@ class DowntimeReasonAdmin(ImportExportModelAdmin):
 
 
 @admin.register(WellMeasurement)
-class WellMeasurementAdmin(admin.ModelAdmin):
+class WellMeasurementAdmin(ImportExportModelAdmin):
     list_display = (
         "well",
         "measurement_date",

@@ -2,11 +2,18 @@ import api from "./api";
 
 import type { User } from "../types/user";
 
-export async function getUsers(params?: Record<string, any>) {
-  const response = await api.get("/auth/users/", { params });
-  const data = response.data;
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+export async function getUsers(
+  params?: Record<string, any>
+): Promise<User[]> {
+  const { data } = await api.get("/auth/users/", { params });
+
+  if (Array.isArray(data)) {
     return data;
   }
-  return data;
+
+  if (data?.results && Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
 }

@@ -12,17 +12,25 @@ export interface Company {
   is_active: boolean;
 }
 
-export async function getCompanies(params?: Record<string, any>) {
+export async function getCompanies(
+  params?: Record<string, any>
+): Promise<Company[]> {
   const { data } = await api.get("/companies/", { params });
-  // If the response uses DRF pagination, return the whole payload
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
+
+  if (Array.isArray(data)) {
     return data;
   }
 
-  return data;
+  if (data?.results && Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
 }
 
-export async function createCompany(payload: Partial<Company>) {
+export async function createCompany(
+  payload: Partial<Company>
+) {
   const { data } = await api.post("/companies/", payload);
   return data;
 }
@@ -31,7 +39,10 @@ export async function updateCompany(
   id: number,
   payload: Partial<Company>
 ) {
-  const { data } = await api.put(`/companies/${id}/`, payload);
+  const { data } = await api.put(
+    `/companies/${id}/`,
+    payload
+  );
   return data;
 }
 
