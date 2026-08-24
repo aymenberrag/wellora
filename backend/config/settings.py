@@ -220,7 +220,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS",
-    default="http://localhost:5173,http://127.0.0.1:5173",
+    default="https://wellora-olive.vercel.app",
     cast=lambda value: [item.strip() for item in value.split(",") if item.strip()],
 )
 
