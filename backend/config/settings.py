@@ -57,7 +57,7 @@ ALLOWED_HOSTS = config(
 
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
-    default="https://wellora-olive.vercel.app/",
+    default="https://wellora-olive.vercel.app",
     cast=lambda value: [item.strip() for item in value.split(",") if item.strip()],
 )
 
