@@ -3,14 +3,13 @@ import api from "./api";
 import type {
   Maintenance,
 } from "../types/maintenance";
+import type { PaginatedResponse } from "../types/pagination";
 
-export async function getMaintenance(params?: Record<string, any>) {
+export async function getMaintenance(
+  params?: Record<string, any>
+): Promise<Maintenance[] | PaginatedResponse<Maintenance>> {
   const response = await api.get("/maintenance/", { params });
-  const data = response.data;
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
-    return data;
-  }
-  return data;
+  return response.data;
 }
 
 export async function createMaintenance(

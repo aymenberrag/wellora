@@ -1,4 +1,5 @@
 import api from "./api";
+import type { PaginatedResponse } from "../types/pagination";
 
 export interface Field {
   id: number;
@@ -35,18 +36,9 @@ export const FIELD_STATUS = [
 
 export async function getFields(
   params?: Record<string, any>
-): Promise<Field[]> {
+): Promise<Field[] | PaginatedResponse<Field>> {
   const { data } = await api.get("/fields/", { params });
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (data?.results && Array.isArray(data.results)) {
-    return data.results;
-  }
-
-  return [];
+  return data;
 }
 
 export async function createField(

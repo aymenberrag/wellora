@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Plus } from "lucide-react";
 
 import type { Measurement } from "../../services/measurement";
 
 import { useMeasurements } from "../../hooks/useMeasurements";
+import { unwrapList } from "../../types/pagination";
 
 import MeasurementStats from "../../components/measurements/MeasurementStats";
 import MeasurementToolbar from "../../components/measurements/MeasurementToolbar";
@@ -29,8 +30,9 @@ export default function MeasurementsPage() {
     status: status !== "All" ? status : undefined,
   });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Measurement[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
   const [selected, setSelected] = useState<Measurement | null>(null);
 

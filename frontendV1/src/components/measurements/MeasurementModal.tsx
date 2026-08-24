@@ -11,6 +11,7 @@ import {
 } from "../../services/measurement";
 
 import { getWells } from "../../services/well";
+import { unwrapList } from "../../types/pagination";
 
 interface Well {
   id: number;
@@ -186,7 +187,7 @@ export default function MeasurementModal({
         getDowntimeReasons(),
       ]);
 
-    setWells(wellsData);
+    setWells(unwrapList(wellsData));
     setReasons(reasonsData);
   }
 

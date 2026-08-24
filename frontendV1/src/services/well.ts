@@ -1,4 +1,5 @@
 import api from "./api";
+import type { PaginatedResponse } from "../types/pagination";
 
 export type WellType =
   | "Oil"
@@ -90,18 +91,9 @@ export const ARTIFICIAL_LIFTS: ArtificialLift[] = [
 
 export async function getWells(
   params?: Record<string, any>
-): Promise<Well[]> {
+): Promise<Well[] | PaginatedResponse<Well>> {
   const { data } = await api.get("/wells/", { params });
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (data?.results && Array.isArray(data.results)) {
-    return data.results;
-  }
-
-  return [];
+  return data;
 }
 
 export async function createWell(

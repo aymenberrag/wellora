@@ -3,14 +3,13 @@ import type {
   Intervention,
   InterventionForm,
 } from "../types/intervention";
+import type { PaginatedResponse } from "../types/pagination";
 
-export async function getInterventions(params?: Record<string, any>) {
+export async function getInterventions(
+  params?: Record<string, any>
+): Promise<Intervention[] | PaginatedResponse<Intervention>> {
   const response = await api.get("/interventions/", { params });
-  const data = response.data;
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
-    return data;
-  }
-  return data;
+  return response.data;
 }
 
 export async function createIntervention(

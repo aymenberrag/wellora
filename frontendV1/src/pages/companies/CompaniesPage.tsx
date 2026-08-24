@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Building2, Plus } from "lucide-react";
 
 import { useCompanies } from "../../hooks/useCompanies";
 import type { Company } from "../../services/company";
+import { unwrapList } from "../../types/pagination";
 
 import CompanyToolbar from "../../components/companies/CompanyToolbar";
 import CompanyTable from "../../components/companies/CompanyTable";
@@ -27,8 +28,9 @@ export default function CompaniesPage() {
     status: status !== "All" ? status : undefined,
   });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Company[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
   const [selected, setSelected] = useState<Company | null>(null);
 

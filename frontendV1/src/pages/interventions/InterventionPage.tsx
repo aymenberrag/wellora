@@ -16,6 +16,7 @@ import { useDeleteIntervention } from "../../hooks/useDeleteIntervention";
 import { useWells } from "../../hooks/useWells";
 import { useCompanies } from "../../hooks/useCompanies";
 import { useUsers } from "../../hooks/useUsers";
+import { unwrapList } from "../../types/pagination";
 
 import type {
   Intervention,
@@ -33,17 +34,20 @@ export default function InterventionPage() {
     isError,
   } = useInterventions({ page, page_size: pageSize });
 
-  const interventions = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? interventions.length;
+  const interventions: Intervention[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : interventions.length;
 
   const {
-    data: wells = [],
+    data: wellsResp,
   } = useWells();
+  const wells = unwrapList(wellsResp);
 
 
   const {
-    data: companies = [],
+    data: companiesResp,
   } = useCompanies();
+  const companies = unwrapList(companiesResp);
 
 
   const {

@@ -9,6 +9,7 @@ import {
 } from "../../services/field";
 
 import { getCompanies } from "../../services/company";
+import { unwrapList } from "../../types/pagination";
 
 interface Props {
   open: boolean;
@@ -49,7 +50,7 @@ export default function FieldModal({
   });
 
   useEffect(() => {
-    getCompanies().then(setCompanies);
+    getCompanies().then((data) => setCompanies(unwrapList(data)));
   }, []);
 
   useEffect(() => {

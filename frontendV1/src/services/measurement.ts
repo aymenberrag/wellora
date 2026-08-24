@@ -1,4 +1,5 @@
 import api from "./api";
+import type { PaginatedResponse } from "../types/pagination";
 
 
 export type Shift = "Day" | "Night";
@@ -76,8 +77,10 @@ export const OPERATING_STATUS: OperatingStatus[] = [
   "Shutdown",
 ];
 
-export async function getMeasurements() {
-  const { data } = await api.get("/measurements/measurements/");
+export async function getMeasurements(
+  params?: Record<string, any>
+): Promise<Measurement[] | PaginatedResponse<Measurement>> {
+  const { data } = await api.get("/measurements/measurements/", { params });
   return data;
 }
 

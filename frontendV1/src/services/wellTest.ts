@@ -3,14 +3,13 @@ import type {
   WellTest,
   WellTestForm,
 } from "../types/wellTest";
+import type { PaginatedResponse } from "../types/pagination";
 
-export async function getWellTests(params?: Record<string, any>) {
+export async function getWellTests(
+  params?: Record<string, any>
+): Promise<WellTest[] | PaginatedResponse<WellTest>> {
   const response = await api.get("/well-tests/", { params });
-  const data = response.data;
-  if (data && typeof data === "object" && (data.results || data.count !== undefined)) {
-    return data;
-  }
-  return data;
+  return response.data;
 }
 
 export async function createWellTest(

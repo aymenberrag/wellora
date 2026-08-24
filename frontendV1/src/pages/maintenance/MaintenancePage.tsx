@@ -8,6 +8,7 @@ import { useDeleteMaintenance } from "../../hooks/useDeleteMaintenance";
 import { useWells } from "../../hooks/useWells";
 import { useCompanies } from "../../hooks/useCompanies";
 import { useUsers } from "../../hooks/useUsers";
+import { unwrapList } from "../../types/pagination";
 
 import type {
   Maintenance,
@@ -28,12 +29,15 @@ export default function MaintenancePage() {
 
   const { data: resp, isLoading } = useMaintenance({ page, page_size: pageSize });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Maintenance[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
-  const { data: wells = [] } = useWells();
+  const { data: wellsResp } = useWells();
+  const wells = unwrapList(wellsResp);
 
-  const { data: companies = [] } = useCompanies();
+  const { data: companiesResp } = useCompanies();
+  const companies = unwrapList(companiesResp);
 
   const { data: users = [] } = useUsers();
 

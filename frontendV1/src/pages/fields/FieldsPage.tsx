@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Plus } from "lucide-react";
 
 import type { Field } from "../../services/field";
 
 import { useFields } from "../../hooks/useFields";
+import { unwrapList } from "../../types/pagination";
 
 import FieldStats from "../../components/fields/FieldStats";
 import FieldToolbar from "../../components/fields/FieldToolbar";
@@ -29,8 +30,9 @@ export default function FieldsPage() {
     status: status !== "All" ? status : undefined,
   });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Field[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
   const [selected, setSelected] = useState<Field | null>(null);
 

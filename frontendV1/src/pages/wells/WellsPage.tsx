@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Plus } from "lucide-react";
 
 import type { Well } from "../../services/well";
 
 import { useWells } from "../../hooks/useWells";
+import { unwrapList } from "../../types/pagination";
 
 import WellStats from "../../components/wells/WellStats";
 import WellToolbar from "../../components/wells/WellToolbar";
@@ -29,8 +30,9 @@ export default function WellsPage() {
     status: status !== "All" ? status : undefined,
   });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Well[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
   const [selected, setSelected] = useState<Well | null>(null);
 

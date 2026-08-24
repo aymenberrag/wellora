@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { useProduction } from "../../hooks/useProduction";
 import { useWells } from "../../hooks/useWells";
+import { unwrapList } from "../../types/pagination";
 
 import { useCreateProduction } from "../../hooks/useCreateProduction";
 import { useUpdateProduction } from "../../hooks/useUpdateProduction";
@@ -26,10 +27,12 @@ export default function ProductionPage() {
 
   const { data: resp, isLoading } = useProduction({ page, page_size: pageSize });
 
-  const data = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? data.length;
+  const data: Production[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : data.length;
 
-  const { data: wells = [] } = useWells();
+  const { data: wellsResp } = useWells();
+  const wells = unwrapList(wellsResp);
 
   const createMutation =
     useCreateProduction();

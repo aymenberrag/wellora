@@ -13,6 +13,7 @@ import { useCreateWellTest } from "../../hooks/useCreateWellTest";
 import { useUpdateWellTest } from "../../hooks/useUpdateWellTest";
 import { useDeleteWellTest } from "../../hooks/useDeleteWellTest";
 import { useWells } from "../../hooks/useWells";
+import { unwrapList } from "../../types/pagination";
 
 import type {
   WellTest,
@@ -29,12 +30,14 @@ export default function WellTestPage() {
     isError,
   } = useWellTests({ page, page_size: pageSize });
 
-  const tests = resp?.results ?? resp ?? [];
-  const total = resp?.count ?? tests.length;
+  const tests: WellTest[] = unwrapList(resp);
+  const total =
+    resp && !Array.isArray(resp) ? resp.count : tests.length;
 
   const {
-    data: wells = [],
+    data: wellsResp,
   } = useWells();
+  const wells = unwrapList(wellsResp);
 
   const createMutation =
     useCreateWellTest();

@@ -1,4 +1,5 @@
 import api from "./api";
+import type { PaginatedResponse } from "../types/pagination";
 
 export interface Company {
   id: number;
@@ -14,18 +15,9 @@ export interface Company {
 
 export async function getCompanies(
   params?: Record<string, any>
-): Promise<Company[]> {
+): Promise<Company[] | PaginatedResponse<Company>> {
   const { data } = await api.get("/companies/", { params });
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (data?.results && Array.isArray(data.results)) {
-    return data.results;
-  }
-
-  return [];
+  return data;
 }
 
 export async function createCompany(
