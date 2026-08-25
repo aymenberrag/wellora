@@ -96,6 +96,11 @@ export async function getWells(
   return data;
 }
 
+export async function getWell(id: number): Promise<Well> {
+  const { data } = await api.get(`/wells/${id}/`);
+  return data;
+}
+
 export async function createWell(
   payload: Partial<Well>
 ) {
