@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { Plus } from "lucide-react";
 
 import type { Well } from "../../services/well";
+import { getWell } from "../../services/well";
 
 import { useWells } from "../../hooks/useWells";
 import { unwrapList } from "../../types/pagination";
@@ -16,6 +18,8 @@ import DeleteWellDialog from "../../components/wells/DeleteWellDialog";
 import Pagination from "../../components/common/Pagination";
 
 export default function WellsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
@@ -41,6 +45,36 @@ export default function WellsPage() {
   const [openDetails, setOpenDetails] = useState(false);
 
   const [openDelete, setOpenDelete] = useState(false);
+
+  // Deep-link support: /wells?wellId=123 opens that well's details
+  // (used by the Well Map "View Well" action).
+  useEffect(() => {
+    const wellId = searchParams.get("wellId");
+    if (!wellId) return;
+
+    let cancelled = false;
+
+    getWell(Number(wellId))
+      .then((well) => {
+        if (cancelled) return;
+        setSelected(well);
+        setOpenDetails(true);
+      })
+      .catch(() => {
+        // well not found / no access — silently ignore and clear the param
+      })
+      .finally(() => {
+        if (cancelled) return;
+        const next = new URLSearchParams(searchParams);
+        next.delete("wellId");
+        setSearchParams(next, { replace: true });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // server-side pagination: data is current page
   const filtered = data;

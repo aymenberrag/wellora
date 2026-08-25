@@ -13,6 +13,7 @@ import ProductionPage from "./pages/production/ProductionPage";
 import MaintenancePage from "./pages/maintenance/MaintenancePage";
 import InterventionPage from "./pages/interventions/InterventionPage";
 import WellTestPage from "./pages/well-tests/WellTestPage";
+import MapPage from "./pages/map/MapPage";
 import Reports from "./pages/reports/Reports";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/companies" element={<ProtectedRoute requiredResource="companies" requiredAction="view"><CompaniesPage /></ProtectedRoute>} />
         <Route path="/fields" element={<ProtectedRoute requiredResource="fields" requiredAction="view"><FieldsPage /></ProtectedRoute>} />
         <Route path="/wells" element={<ProtectedRoute requiredResource="wells" requiredAction="view"><WellsPage /></ProtectedRoute>} />
+        <Route path="/map" element={<ProtectedRoute requiredResource="wells" requiredAction="view"><MapPage /></ProtectedRoute>} />
         <Route path="/measurements" element={<ProtectedRoute requiredResource="measurements" requiredAction="view"><MeasurementsPage /></ProtectedRoute>} />
         <Route path="/production" element={<ProtectedRoute requiredResource="production" requiredAction="view"><ProductionPage /></ProtectedRoute>} />
         <Route path="/maintenance" element={<ProtectedRoute requiredResource="maintenance" requiredAction="view"><MaintenancePage /></ProtectedRoute>} />

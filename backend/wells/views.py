@@ -30,4 +30,28 @@ class WellViewSet(ModelViewSet):
     ordering_fields = "__all__"
 
     def get_queryset(self):
-        return scope_queryset_for_user(self.request.user, Well.objects.all(), "wells")
+        queryset = scope_queryset_for_user(self.request.user, Well.objects.all(), "wells")
+
+        params = self.request.query_params
+
+        field = params.get("field")
+        if field:
+            queryset = queryset.filter(field_id=field)
+
+        status_param = params.get("status")
+        if status_param and status_param != "All":
+            queryset = queryset.filter(status=status_param)
+
+        well_type = params.get("well_type")
+        if well_type and well_type != "All":
+            queryset = queryset.filter(well_type=well_type)
+
+        artificial_lift = params.get("artificial_lift")
+        if artificial_lift and artificial_lift != "All":
+            queryset = queryset.filter(artificial_lift=artificial_lift)
+
+        has_coordinates = params.get("has_coordinates")
+        if has_coordinates in ("true", "1"):
+            queryset = queryset.exclude(latitude__isnull=True).exclude(longitude__isnull=True)
+
+        return queryset
